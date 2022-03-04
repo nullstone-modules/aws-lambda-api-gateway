@@ -11,10 +11,12 @@ resource "aws_apigatewayv2_domain_name" "this" {
   tags        = local.tags
 
   domain_name_configuration {
-    certificate_arn = module.cert.certificate_arn
+    certificate_arn = aws_acm_certificate.this.arn
     endpoint_type   = "REGIONAL"
     security_policy = "TLS_1_2"
   }
+
+  depends_on = [aws_acm_certificate_validation.this]
 }
 
 resource "aws_apigatewayv2_api_mapping" "this" {
