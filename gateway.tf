@@ -2,7 +2,7 @@ resource "aws_apigatewayv2_api" "this" {
   name                         = local.resource_name
   protocol_type                = "HTTP"
   disable_execute_api_endpoint = true
-  target                       = var.app_metadata["function_arn"]
+  target                       = local.function_arn
   tags                         = local.tags
 }
 

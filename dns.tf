@@ -1,4 +1,3 @@
-
 resource "aws_route53_record" "vanity" {
   name    = aws_apigatewayv2_domain_name.this.domain_name
   type    = "A"

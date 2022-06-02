@@ -6,24 +6,19 @@ terraform {
   }
 }
 
-variable "app_metadata" {
-  description = <<EOF
-App Metadata is injected from the app on-the-fly.
-This contains information about resources created in the app module that are needed by the capability.
-EOF
-
-  type    = map(string)
-  default = {}
-}
-
 data "ns_workspace" "this" {}
 
-data "ns_connection" "subdomain" {
-  name = "subdomain"
-  type = "subdomain/aws"
+// Generate a random suffix to ensure uniqueness of resources
+resource "random_string" "resource_suffix" {
+  length  = 5
+  lower   = true
+  upper   = false
+  number  = false
+  special = false
 }
 
 locals {
-  subdomain_name    = trimsuffix(try(data.ns_connection.subdomain.outputs.fqdn, ""), ".")
-  subdomain_zone_id = try(data.ns_connection.subdomain.outputs.zone_id, "")
+  tags          = data.ns_workspace.this.tags
+  block_name    = data.ns_workspace.this.block_name
+  resource_name = "${data.ns_workspace.this.block_ref}-${random_string.resource_suffix.result}"
 }
