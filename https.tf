@@ -1,24 +1,30 @@
+locals {
+  alternative_names = []
+}
+
 resource "aws_acm_certificate" "this" {
   domain_name               = local.subdomain_name
   validation_method         = "DNS"
-  subject_alternative_names = []
+  subject_alternative_names = local.alternative_names
   tags                      = local.tags
 }
 
+locals {
+  dvos = [for dvo in aws_acm_certificate.this.domain_validation_options : {
+    name   = dvo.resource_record_name
+    record = dvo.resource_record_value
+    type   = dvo.resource_record_type
+  }]
+}
+
 resource "aws_route53_record" "cert_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.this.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
+  count = length(local.alternative_names) + 1
 
   allow_overwrite = true
-  name            = each.value.name
-  records         = [each.value.record]
+  name            = local.dvos[count.index].name
+  records         = [local.dvos[count.index].record]
+  type            = local.dvos[count.index].type
   ttl             = 60
-  type            = each.value.type
   zone_id         = local.subdomain_zone_id
 }
 
