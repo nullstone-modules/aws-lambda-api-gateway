@@ -4,6 +4,6 @@ data "ns_connection" "subdomain" {
 }
 
 locals {
-  subdomain_name    = trimsuffix(try(data.ns_connection.subdomain.outputs.fqdn, ""), ".")
-  subdomain_zone_id = try(data.ns_connection.subdomain.outputs.zone_id, "")
+  subdomain_name    = trimsuffix(data.ns_connection.subdomain.outputs.fqdn, ".")
+  subdomain_zone_id = data.ns_connection.subdomain.outputs.zone_id
 }
