@@ -2,11 +2,13 @@ org_name: nullstone
 name: aws-lambda-api-gateway
 friendly_name: API Gateway for Lambda
 description: Enables public access to a Lambda through an API Gateway with automated SSL creation.
-category: capability/public-entry
-type: capability/api-gateway/aws-lambda
-appCategories:
-    - app/serverless
-layer: service
-is_public: true
+category: capability
+subcategory: ingress
 provider_types:
     - aws
+platform: api-gateway
+subplatform: ""
+type: capability/api-gateway/aws-lambda
+appCategories:
+    - serverless
+is_public: true
